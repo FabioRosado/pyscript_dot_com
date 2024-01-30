@@ -1,6 +1,7 @@
 from unittest import mock
 
-from pyscript_dot_com.requests import request
+# from pyscript_dot_com.requests import request
+from pyscript_dot_com import request
 
 
 def test_request_happy_path():

@@ -1,6 +1,4 @@
 import asyncio
-import json
-from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Optional
 
 import requests
@@ -9,7 +7,6 @@ import requests
 async def async_request(
     url: str,
     method: str = "GET",
-    mode: str = "cors",
     body: Optional[dict[str, str]] = None,
     headers: Optional[dict[str, str]] = None,
     cookies: Optional[dict[str, str]] = None,
@@ -47,7 +44,6 @@ async def async_request(
 def request(
     url: str,
     method: str = "GET",
-    mode: str = "cors",
     body: Optional[dict[str, str]] = None,
     headers: Optional[dict[str, str]] = None,
     cookies: Optional[dict[str, str]] = None,
@@ -84,7 +80,6 @@ def request(
             async_request(
                 url,
                 method=method,
-                mode=mode,
                 body=body,
                 headers=headers,
                 cookies=cookies,
@@ -100,7 +95,6 @@ def request(
             async_request(
                 url,
                 method=method,
-                mode=mode,
                 body=body,
                 headers=headers,
                 cookies=cookies,
