@@ -1,0 +1,21 @@
+*.egg-info
+.env
+.hypothesis
+
+!jest.config.js
+*.d.ts
+node_modules
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
+
+# Jetbrains config folders
+.idea
+
+__pycache__
+dist
+.DS_Store
+
+.pytest_cache
+.coverage
