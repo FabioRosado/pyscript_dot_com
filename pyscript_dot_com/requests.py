@@ -10,11 +10,9 @@ async def async_request(
     url: str,
     method: str = "GET",
     mode: str = "cors",
-    body: Optional[str] = None,
+    body: Optional[dict[str, str]] = None,
     headers: Optional[dict[str, str]] = None,
     cookies: Optional[dict[str, str]] = None,
-    include_cookies: bool = False,
-    **fetch_kwargs: Any,
 ):
     """
     Async request function to make requests to the web.
@@ -35,12 +33,11 @@ async def async_request(
         "mode": mode,
     }
     if body and method not in ["GET", "HEAD"]:
-        kwargs["data"] = json.dumps(body)
+        kwargs["json"] = body
     if headers:
-        kwargs["headers"] = json.dumps(headers)
-    if include_cookies:
-        kwargs["credentials"] = "include"
-        kwargs["cookies"] = json.dumps(cookies)
+        kwargs["headers"] = headers
+    if cookies:
+        kwargs["cookies"] = cookies
 
     result = requests.request(url=url, **kwargs)
 
@@ -51,7 +48,7 @@ def request(
     url: str,
     method: str = "GET",
     mode: str = "cors",
-    body: Optional[str] = None,
+    body: Optional[dict[str, str]] = None,
     headers: Optional[dict[str, str]] = None,
     cookies: Optional[dict[str, str]] = None,
     block_thread: bool = False,
@@ -94,24 +91,24 @@ def request(
                 **fetch_kwargs,
             )
         )
-        return response
 
-    # This makes sure that we don't block the thread, by using
-    # futures and callbacks.
-    future = asyncio.Future()
-    async_task = asyncio.ensure_future(
-        async_request(
-            url,
-            method=method,
-            mode=mode,
-            body=body,
-            headers=headers,
-            cookies=cookies,
-            **fetch_kwargs,
-        ),
-        loop=loop,
-    )
-    async_task.add_done_callback(lambda f: future.set_result(f.result()))
-    return_value = loop.run_until_complete(future)
+    else:
+        # This makes sure that we don't block the thread, by using
+        # futures and callbacks.
+        future = asyncio.Future()
+        async_task = asyncio.ensure_future(
+            async_request(
+                url,
+                method=method,
+                mode=mode,
+                body=body,
+                headers=headers,
+                cookies=cookies,
+                **fetch_kwargs,
+            ),
+            loop=loop,
+        )
+        async_task.add_done_callback(lambda f: future.set_result(f.result()))
+        response = loop.run_until_complete(future)
 
-    return return_value
+    return response
