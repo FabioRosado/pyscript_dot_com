@@ -1,0 +1,19 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools", "setuptools-scm"]
+
+[project]
+authors = [
+  {name = "Fabio Rosado", email = "frosado@anaconda.com"},
+]
+description = "Package to use PyScript.com features in a simple and easy way"
+licence = {text = "Apache-2.0"}
+name = "pyscript_dot_com"
+readme = "README.md"
+version = "0.0.1"
+docs = [
+"Sphinx==7.2.6",
+"sphinx-autobuild==2021.3.14",
+"myst-parser==2.0.0",
+"pydata-sphinx-theme==0.15.2"
+]
