@@ -1,79 +1,84 @@
-from unittest import mock
-
-# from pyscript_dot_com.requests import request
 from pyscript_dot_com import request
 
 
-def test_request_happy_path():
+def test_get_request_bad_response(running_server):
+    expected_response = {
+        "error": True,
+        "status": 500,
+        "statusText": "Internal Server Error",
+    }
 
-    with mock.patch("requests.request") as mocked_request:
+    response = request(f"{running_server['address']}/exception")
+    assert response == expected_response
 
-        mocked_request.return_value.ok = True
-        mocked_request.return_value.status = 200
-        mocked_request.return_value.statusText = "OK"
-        mocked_request.return_value.json = mock.MagicMock(return_value={"foo": "bar"})
-
-        response = request("https://example.com")
-
-        assert response == {"foo": "bar"}
-
-        # Make sure that block_thread set to True still returns the response
-
-        response = request("https://example.com", block_thread=True)
-        assert response == {"foo": "bar"}
+    # Now let's make sure that block_thread=True works as well
+    response = request(f"{running_server['address']}/exception", block_thread=True)
+    assert response == expected_response
 
 
-def test_request_headers():
+def test_end_to_end_get_request(running_server):
+    """Test that we can make a request to a running server."""
+    expected_response = {"message": "Hello, this is the server response!"}
+    response = request(f"{running_server['address']}/some_endpoint")
 
-    with mock.patch("requests.request") as mocked_request:
+    # This is the default response from the server
+    assert response == expected_response
 
-        mocked_request.return_value.ok = True
-        mocked_request.return_value.status = 200
-        mocked_request.return_value.statusText = "OK"
-        mocked_request.return_value.json = mock.MagicMock(return_value={"foo": "bar"})
-
-        response = request("https://example.com", headers={"X-Test": "test"})
-
-        assert response == {"foo": "bar"}
-        assert mocked_request.call_args.kwargs["headers"] == {"X-Test": "test"}
-        assert mocked_request.call_args.kwargs["method"] == "GET"
+    # Now let's make sure that block_thread=True works as well
+    response = request(f"{running_server['address']}/some_endpoint", block_thread=True)
+    assert response == expected_response
 
 
-def test_request_post_request():
+def test_request_gets_cookies_correctly(running_server):
+    """Test that the request function gets cookies correctly."""
+    cookies = {"cookie": "my-cookie"}
+    response = request(f"{running_server['address']}/test-cookies", cookies=cookies)
 
-    with mock.patch("requests.request") as mocked_request:
+    # The server will return the passed in cookies on this path
+    assert response == cookies
 
-        mocked_request.return_value.ok = True
-        mocked_request.return_value.status = 200
-        mocked_request.return_value.statusText = "OK"
-        mocked_request.return_value.json = mock.MagicMock(return_value={"foo": "bar"})
+    # Now let's make sure that block_thread=True works as well
+    response = request(
+        f"{running_server['address']}/test-cookies", cookies=cookies, block_thread=True
+    )
 
-        response = request(
-            "https://example.com", method="POST", body={"test": "testing"}
-        )
-
-        assert response == {"foo": "bar"}
-        assert mocked_request.call_args.kwargs["json"] == {"test": "testing"}
-        assert mocked_request.call_args.kwargs["method"] == "POST"
+    assert response == cookies
 
 
-def test_request_post_request_with_cookies():
+def test_request_gets_headers_correctly(running_server):
+    """Test that the request function gets the headers correctly."""
+    headers = {"X-Test": "test"}
+    response = request(f"{running_server['address']}/test-headers", headers=headers)
 
-    with mock.patch("requests.request") as mocked_request:
+    # The server returns the headers on this path
+    assert response and response.get("X-Test") == "test"
 
-        mocked_request.return_value.ok = True
-        mocked_request.return_value.status = 200
-        mocked_request.return_value.statusText = "OK"
-        mocked_request.return_value.json = mock.MagicMock(return_value={"foo": "bar"})
+    # Now let's make sure that block_thread=True works as well
+    response = request(
+        f"{running_server['address']}/test-headers", headers=headers, block_thread=True
+    )
+    assert response and response.get("X-Test") == "test"
 
-        response = request(
-            "https://example.com",
-            method="POST",
-            body={"test": "testing"},
-            cookies={"cookie": "my-cookie"},
-        )
 
-        assert response == {"foo": "bar"}
-        assert mocked_request.call_args.kwargs["json"] == {"test": "testing"}
-        assert mocked_request.call_args.kwargs["method"] == "POST"
-        assert mocked_request.call_args.kwargs["cookies"] == {"cookie": "my-cookie"}
+def test_end_to_end_post_request(running_server):
+    """Test that we can make a request to a running server."""
+
+    data = {"test": "testing"}
+
+    response = request(
+        f"{running_server['address']}/some_endpoint",
+        method="POST",
+        body=data,
+    )
+
+    # This is the default response from the server
+    assert response == data
+
+    # Now let's make sure that block_thread=True works as well
+    response = request(
+        f"{running_server['address']}/some_endpoint",
+        method="POST",
+        body=data,
+        block_thread=True,
+    )
+    assert response == data

@@ -27,7 +27,6 @@ async def async_request(
 
     kwargs = {
         "method": method,
-        "mode": mode,
     }
     if body and method not in ["GET", "HEAD"]:
         kwargs["json"] = body
@@ -38,7 +37,22 @@ async def async_request(
 
     result = requests.request(url=url, **kwargs)
 
-    return result.json()
+    # Not going to raise an exception here otherwise
+    # we need to handle it in the callback and is a
+    # bit of a pain, let's just return a dict with the
+    # status code and status text so that we can handle
+    # bad responses in the logic that handles the request
+    if not result.ok:
+        return {
+            "error": True,
+            "status": result.status_code,
+            "statusText": result.reason,
+        }
+
+    if result.headers.get("Content-Type") == "application/json":
+        return result.json()
+
+    return result.text
 
 
 def request(
