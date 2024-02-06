@@ -14,6 +14,7 @@ def request(
     body: Optional[dict[str, str]] = None,
     headers: Optional[dict[str, str]] = None,
     cookies: Optional[dict[str, str]] = None,
+    **kwargs,
 ):
     """Call underlying async request function and return result.
 

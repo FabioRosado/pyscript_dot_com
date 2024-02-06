@@ -1,5 +1,5 @@
-from urllib.parse import urlparse
 from typing import Optional
+from urllib.parse import urlparse
 
 from pyscript_dot_com.requests import request
 from pyscript_dot_com.utils import get_page_url
@@ -20,6 +20,8 @@ def proxy(name, method: str = "GET", account: Optional[str] = None):
         # TODO: For the love of everything, please
         # refactor this dumpster fire!
         page_url = get_page_url()
+
+        # TODO: We need to support micropython here
         parsed_url = urlparse(page_url)
 
         base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"

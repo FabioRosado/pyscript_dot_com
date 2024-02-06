@@ -1,0 +1,19 @@
+- [ ] Error handler to display error in the UI
+- [x] Add logic to fetch project id from the project slug
+- [x] Add logic to get project slug and user slug from the URL
+    ```python
+    @router.get(
+        "/{user_id_or_username}/{project_slug}",
+        response_model=schema.ProjectResponse,
+    )
+    ```
+- [ ] Replace all requests with pyfetch instead
+- 
+
+
+## Backend changes
+
+- [ ] Add logic to use psadc cookie to get the user info and authenticate with it
+- [ ] Find way to get a reference to the user in the project
+- [ ] Add logic for saving the project state (simple key, value store)
+- [ ] Add logic for saving blob data (stringified payload similar to the browser's storage)
