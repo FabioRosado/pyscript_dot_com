@@ -1,7 +1,7 @@
-import asyncio
 from typing import Optional
 
 import requests
+import urllib3
 
 # TODO:
 # - Support Micropython
@@ -37,6 +37,11 @@ def request(
         response: dictionary response from the request.
 
     """
+
+    # Disable InsecureRequestWarning from urllib3 - since the preview is running in
+    # an iframe, we can't verify the SSL cert since it's running in a different domain
+    # we then disable the warnings and explicitly pass `verify=True`
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     kwargs = {
         "method": method,

@@ -13,8 +13,12 @@ def running_server():
 
 
 @pytest.fixture()
-def url(running_server):
-    with mock.patch("pyscript_dot_com.utils.document") as mocked_document:
-        mocked_document.URL = f"{running_server['address']}/project-slug/version/"
+def url(document, running_server):
+    document.URL = f"{running_server['address']}/project-slug/version/"
+    yield document
 
+
+@pytest.fixture()
+def document():
+    with mock.patch("pyscript_dot_com.utils.document") as mocked_document:
         yield mocked_document
