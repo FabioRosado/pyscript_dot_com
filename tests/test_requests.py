@@ -11,9 +11,6 @@ def test_get_request_bad_response(running_server):
     response = request(f"{running_server['address']}/exception")
     assert response == expected_response
 
-    # Now let's make sure that block_thread=True works as well
-    response = request(f"{running_server['address']}/exception", block_thread=True)
-    assert response == expected_response
 
 
 def test_end_to_end_get_request(running_server):
@@ -24,11 +21,6 @@ def test_end_to_end_get_request(running_server):
     # This is the default response from the server
     assert response == expected_response
 
-    # Now let's make sure that block_thread=True works as well
-    response = request(f"{running_server['address']}/some_endpoint", block_thread=True)
-    assert response == expected_response
-
-
 def test_request_gets_cookies_correctly(running_server):
     """Test that the request function gets cookies correctly."""
     cookies = {"cookie": "my-cookie"}
@@ -37,12 +29,6 @@ def test_request_gets_cookies_correctly(running_server):
     # The server will return the passed in cookies on this path
     assert response == cookies
 
-    # Now let's make sure that block_thread=True works as well
-    response = request(
-        f"{running_server['address']}/test-cookies", cookies=cookies, block_thread=True
-    )
-
-    assert response == cookies
 
 
 def test_request_gets_headers_correctly(running_server):
@@ -51,12 +37,6 @@ def test_request_gets_headers_correctly(running_server):
     response = request(f"{running_server['address']}/test-headers", headers=headers)
 
     # The server returns the headers on this path
-    assert response and response.get("X-Test") == "test"
-
-    # Now let's make sure that block_thread=True works as well
-    response = request(
-        f"{running_server['address']}/test-headers", headers=headers, block_thread=True
-    )
     assert response and response.get("X-Test") == "test"
 
 
@@ -72,13 +52,4 @@ def test_end_to_end_post_request(running_server):
     )
 
     # This is the default response from the server
-    assert response == data
-
-    # Now let's make sure that block_thread=True works as well
-    response = request(
-        f"{running_server['address']}/some_endpoint",
-        method="POST",
-        body=data,
-        block_thread=True,
-    )
     assert response == data

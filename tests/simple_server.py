@@ -37,6 +37,12 @@ class MyHandler(SimpleHTTPRequestHandler):
             json_data = json.dumps(headers)
             self.wfile.write(json_data.encode("utf-8"))
 
+        elif self.path == "/my/api-proxies/test":
+            self._send_headers()
+            json_data = json.dumps(
+                {"message": "You called the 'test' proxy with a 'GET' method!"}
+            )
+            self.wfile.write(json_data.encode("utf-8"))
         else:
             self._send_headers()
 
