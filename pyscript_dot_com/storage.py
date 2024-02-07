@@ -60,6 +60,15 @@ class state:
         # return response
         raise NotImplementedError
 
+    def delete(self, key: str):
+        """Delete state by key."""
+        if not isinstance(key, str):
+            raise ValueError("Key must be a string.")
+        # TODO: Pseudo code
+        # response = request(f"{PSDC_DOMAIN}/api/projects/{self.project_id}/state/{key}", method="DELETE", cookies=self.cookies)
+        # return response
+        raise NotImplementedError
+
 
 class store:
     def __init__(self):
@@ -93,6 +102,16 @@ class store:
         # return response
         raise NotImplementedError
 
+    def delete(self, key: str):
+        """Delete store by key."""
+        if not isinstance(key, str):
+            raise ValueError("Key must be a string.")
+
+        # TODO: Pseudo code
+        # response = request(f"https://pyscript.com/api/projects/{self.project_id}/storage/{key}", method="DELETE", cookies=self.cookies)
+        # return response
+        raise NotImplementedError
+
 
 def _get_project_by_slug() -> str:
     """Get the project by slug."""
@@ -110,9 +129,4 @@ def _get_project_by_slug() -> str:
     if not project_id:
         raise Exception("Error getting project by slug.")
 
-    return project_id
-    return project_id
-    return project_id
-    return project_id
-    return project_id
     return project_id

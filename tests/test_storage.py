@@ -63,6 +63,16 @@ def test_state_set(document, project):
         storage.state().set({}, "key")
 
 
+def test_state_delete(document, project):
+    with pytest.raises(NotImplementedError):
+        storage.state().delete("key")
+
+
+def test_state_delete_invalid_key(document, project):
+    with pytest.raises(ValueError):
+        storage.state().delete(1)
+
+
 def test_state_set_invalid_state(document, project):
     with pytest.raises(ValueError):
         storage.state().set(1, "key")
@@ -91,3 +101,13 @@ def test_store_set_invalid_payload(document, project):
 def test_store_set_invalid_key(document, project):
     with pytest.raises(ValueError):
         storage.store().set("", 1)
+
+
+def test_store_delete(document, project):
+    with pytest.raises(NotImplementedError):
+        storage.store().delete("key")
+
+
+def test_store_delete_invalid_key(document, project):
+    with pytest.raises(ValueError):
+        storage.store().delete(1)
