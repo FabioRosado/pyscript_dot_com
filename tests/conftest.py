@@ -28,24 +28,8 @@ def document():
 
 
 @pytest.fixture()
-def project():
-    with mock.patch("pyscript_dot_com.storage.request") as mocked_request:
-        expected_project_id = "cd0350f0"
-        mocked_request.return_value = {
-            "id": expected_project_id,
-            "user_id": "7a3ff64c",
-            "username": "",
-            "type": "app",
-            "name": "Broken Snow",
-            "slug": "broken-snow",
-            "description": "",
-            "icon": "./pyscript-logo.png",
-            "created_at": "2024-02-05T16:05:03.063892Z",
-            "updated_at": "2024-02-05T16:05:03.063892Z",
-            "latest": {},
-            "default_version": "latest",
-            "tags": [],
-            "auth_required": False,
-            "auth_users_allowed": [],
-        }
-        yield mocked_request
+def project(document, running_server):
+    with mock.patch(
+        "pyscript_dot_com.storage.PSDC_DOMAIN", new=running_server["address"]
+    ) as mocked_domain:
+        yield mocked_domain

@@ -1,5 +1,6 @@
 import contextlib
 import json
+import re
 import socket
 from http.server import SimpleHTTPRequestHandler
 from socketserver import TCPServer
@@ -43,6 +44,29 @@ class MyHandler(SimpleHTTPRequestHandler):
                 {"message": "You called the 'test' proxy with a 'GET' method!"}
             )
             self.wfile.write(json_data.encode("utf-8"))
+
+        elif self.path == "/api/projects/user/project_slug":
+            self._send_headers()
+            json_data = json.dumps(
+                {
+                    "id": "cd0350f0",
+                    "user_id": "7a3ff64c",
+                    "username": "",
+                    "type": "app",
+                    "name": "Broken Snow",
+                    "slug": "broken-snow",
+                    "description": "",
+                    "icon": "./pyscript-logo.png",
+                    "created_at": "2024-02-05T16:05:03.063892Z",
+                    "updated_at": "2024-02-05T16:05:03.063892Z",
+                    "latest": {},
+                    "default_version": "latest",
+                    "tags": [],
+                    "auth_required": False,
+                    "auth_users_allowed": [],
+                }
+            )
+            self.wfile.write(json_data.encode("utf-8"))
         else:
             self._send_headers()
 
@@ -64,8 +88,20 @@ class MyHandler(SimpleHTTPRequestHandler):
 
         self._send_headers()
 
-        # Now let's just send the same data back
-        self.wfile.write(post_data)
+        if self.path == "/api/projects/cd0350f0/files":
+            match = re.search(r'filename="([^"]+)"', post_data.decode("utf-8"))
+            if match:
+                file_name = match.group(1)
+                json_data = json.dumps({"file_name": file_name})
+                # Write the JSON string to the response body
+                self.wfile.write(json_data.encode("utf-8"))
+            else:
+                self.send_response(500)
+                self.send_header("Content-type", "text/plain")
+
+        else:
+            # Now let's just send the same data back
+            self.wfile.write(post_data)
 
     def _send_headers(self, content_type="application/json"):
         """Send the headers for the response"""  # Return a 200 response

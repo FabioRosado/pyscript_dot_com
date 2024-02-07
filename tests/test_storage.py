@@ -6,64 +6,32 @@ import pytest
 from pyscript_dot_com import storage
 
 
-def test__get_project_by_slug(document):
-    with mock.patch("pyscript_dot_com.storage.request") as mocked_request:
-        expected_project_id = "cd0350f0"
-        mocked_request.return_value = {
-            "id": expected_project_id,
-            "user_id": "7a3ff64c",
-            "username": "",
-            "type": "app",
-            "name": "Broken Snow",
-            "slug": "broken-snow",
-            "description": "",
-            "icon": "./pyscript-logo.png",
-            "created_at": "2024-02-05T16:05:03.063892Z",
-            "updated_at": "2024-02-05T16:05:03.063892Z",
-            "latest": {},
-            "default_version": "latest",
-            "tags": [],
-            "auth_required": False,
-            "auth_users_allowed": [],
-        }
+def test__get_project_by_slug(project):
+    expected_project_id = "cd0350f0"
+    project_id = storage._get_project_by_slug()
 
-        project_id = storage._get_project_by_slug()
-
-        assert project_id == expected_project_id
+    assert project_id == expected_project_id
 
 
-def test_save_file_to_project(document):
-    with mock.patch("pyscript_dot_com.storage.request") as mocked_request, mock.patch(
-        "pyscript_dot_com.storage._get_project_by_slug"
-    ) as mocked_get_project_by_slug:
-        mocked_get_project_by_slug.return_value = "cd0350f0"
-        mocked_request.return_value = {"status": "success"}  # This is a fake response
+def test_save_file_to_project(project):
+    file = io.BytesIO(b"test")
+    name = "test.txt"
 
-        file = io.BytesIO(b"test")
-        name = "test.txt"
+    response = storage.save_file_to_project(file, name)
 
-        response = storage.save_file_to_project(file, name)
-
-        assert response == True
+    assert response == True
 
 
-def test_save_file_to_project_no_name(document):
-    document.cookie = "session=1234"
-    with mock.patch("pyscript_dot_com.storage.request") as mocked_request, mock.patch(
-        "pyscript_dot_com.storage._get_project_by_slug"
-    ) as mocked_get_project_by_slug:
-        mocked_get_project_by_slug.return_value = "cd0350f0"
-        mocked_request.return_value = {"status": "success"}  # This is a fake response
+def test_save_file_to_project_no_name(project):
+    file = io.BytesIO(b"test")
+    file.name = "test.txt"
 
-        file = io.BytesIO(b"test")
-        file.name = "test.txt"
+    response = storage.save_file_to_project(file)
 
-        response = storage.save_file_to_project(file)
-
-        assert response == True
+    assert response == True
 
 
-def test_save_file_to_project_error(document, project):
+def test_save_file_to_project_error(project):
     with mock.patch("pyscript_dot_com.storage.request") as mocked_request, mock.patch(
         "pyscript_dot_com.storage._get_project_by_slug"
     ) as mocked_get_project_by_slug:

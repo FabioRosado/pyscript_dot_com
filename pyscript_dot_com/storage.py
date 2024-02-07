@@ -2,6 +2,7 @@ import io
 import json
 from typing import Optional, Union
 
+from pyscript_dot_com.const import PSDC_DOMAIN
 from pyscript_dot_com.requests import request
 from pyscript_dot_com.utils import get_page_cookies, get_project_slug_and_user_from_url
 
@@ -20,7 +21,7 @@ def save_file_to_project(file: io.BytesIO, name: Optional[str] = None):
     if not name:
         name = file.name
 
-    url = f"https://pyscript.com/api/projects/{project_id}/files"
+    url = f"{PSDC_DOMAIN}/api/projects/{project_id}/files"
     files = {"file": (name, file)}
     response = request(url, method="POST", files=files, cookies=cookies)
 
@@ -42,7 +43,7 @@ class state:
         if not isinstance(key, str):
             raise ValueError("Key must be a string.")
         # TODO: Pseudo code
-        # response = request(f"https://pyscript.com/api/projects/{self.project_id}/state/{key}", cookies=self.cookies)
+        # response = request(f"{PSDC_DOMAIN}/api/projects/{self.project_id}/state/{key}", cookies=self.cookies)
         # return response
         raise NotImplementedError
 
@@ -55,7 +56,7 @@ class state:
             raise ValueError("Key must be a string.")
 
         # TODO: Pseudo code
-        # response = request(f"https://pyscript.com/api/projects/{self.project_id}/state/{key}", method="POST", body=state)
+        # response = request(f"{PSDC_DOMAIN}/api/projects/{self.project_id}/state/{key}", method="POST", body=state)
         # return response
         raise NotImplementedError
 
@@ -97,7 +98,7 @@ def _get_project_by_slug() -> str:
     """Get the project by slug."""
     project_slug, user = get_project_slug_and_user_from_url()
 
-    response = request(f"https://pyscript.com/api/projects/{user}/{project_slug}")
+    response = request(f"{PSDC_DOMAIN}/api/projects/{user}/{project_slug}")
 
     if not isinstance(response, dict):
         raise Exception("Error getting project by slug.")
@@ -109,4 +110,9 @@ def _get_project_by_slug() -> str:
     if not project_id:
         raise Exception("Error getting project by slug.")
 
+    return project_id
+    return project_id
+    return project_id
+    return project_id
+    return project_id
     return project_id
