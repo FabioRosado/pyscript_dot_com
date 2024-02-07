@@ -43,10 +43,11 @@ def request(
     # an iframe, we can't verify the SSL cert since it's running in a different domain
     # we then disable the warnings and explicitly pass `verify=True`
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    if not kwargs:
+        kwargs = {}
 
-    kwargs = {
-        "method": method,
-    }
+    kwargs["method"] = method
+
     if body and method not in ["GET", "HEAD"]:
         kwargs["json"] = body
     if headers:

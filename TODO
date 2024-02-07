@@ -8,7 +8,9 @@
     )
     ```
 - [ ] Replace all requests with pyfetch instead
-- 
+- [ ] Add all consts such as urls, to a single file to ease mock
+    - [ ] remove mocking to use the running_server
+    - [ ] Add route to the running server
 
 
 ## Backend changes

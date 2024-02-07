@@ -6,7 +6,7 @@ from pyscript_dot_com.requests import request
 from pyscript_dot_com.utils import get_page_cookies, get_project_slug_and_user_from_url
 
 
-def save_file_to_project(file: io.BytesIO, name: Optional[str]):
+def save_file_to_project(file: io.BytesIO, name: Optional[str] = None):
     """Save a file to the project's storage.
 
     Args:
@@ -24,7 +24,6 @@ def save_file_to_project(file: io.BytesIO, name: Optional[str]):
     files = {"file": (name, file)}
     response = request(url, method="POST", files=files, cookies=cookies)
 
-    # TODO: Need to generate error handling
     if isinstance(response, dict) and response.get("error"):
         raise Exception(response["error"])
     return True
@@ -47,18 +46,21 @@ class state:
         # return response
         raise NotImplementedError
 
-    def set(self, state: dict):
+    def set(self, state: dict, key: str):
         """Set state."""
         if not isinstance(state, dict):
             raise ValueError("State must be a dictionary.")
 
+        if not isinstance(key, str):
+            raise ValueError("Key must be a string.")
+
         # TODO: Pseudo code
-        # response = request(f"https://pyscript.com/api/projects/{self.project_id}/state", method="POST", body=state)
+        # response = request(f"https://pyscript.com/api/projects/{self.project_id}/state/{key}", method="POST", body=state)
         # return response
         raise NotImplementedError
 
 
-class storage:
+class store:
     def __init__(self):
         self.project_id = _get_project_by_slug()
         self.cookies = get_page_cookies()
@@ -74,15 +76,16 @@ class storage:
         raise NotImplementedError
 
     def set(self, key: str, payload: Union[dict, str]):
-        """Set state."""
+        """Set payload in store."""
         if not isinstance(key, str):
             raise ValueError("Key must be a string.")
 
-        if not isinstance(state, dict) or not isinstance(state, str):
-            raise ValueError("State must be a dictionary or a string.")
-
         if isinstance(payload, dict):
             payload = json.dumps(payload)
+        elif isinstance(payload, str):
+            payload = payload
+        else:
+            raise ValueError("Payload must be a dictionary or a string.")
 
         # TODO: Pseudo code
         # response = request(f"https://pyscript.com/api/projects/{self.project_id}/storage/{key}"", method="POST", body=state, cookies=self.cookies)
