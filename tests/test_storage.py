@@ -48,66 +48,94 @@ def test_save_file_to_project_error(project):
         assert str(excinfo.value) == "Something went wrong"
 
 
-def test_state_get(document, project):
+def test_state_set_get_and_delete_browser(document, project):
+    key = "test"
+    value = "test_value"
+
+    storage.state().set(value, key, use_browser_storage=True)
+    response = storage.state().get(key, use_browser_storage=True)
+
+    assert response == value
+
+    storage.state().delete(key, use_browser_storage=True)
+    response = storage.state().get(key, use_browser_storage=True)
+    assert response == {}
+
+
+def test_state_get_api(document, project):
     with pytest.raises(NotImplementedError):
-        storage.state().get("key")
+        storage.state().get("key", use_browser_storage=False)
 
 
 def test_state_get_invalid_key(document, project):
     with pytest.raises(ValueError):
-        storage.state().get(1)
+        storage.state().get(1, use_browser_storage=False)
 
 
-def test_state_set(document, project):
+def test_state_set_api(document, project):
     with pytest.raises(NotImplementedError):
-        storage.state().set({}, "key")
+        storage.state().set({}, "key", use_browser_storage=False)
 
 
-def test_state_delete(document, project):
+def test_state_delete_api(document, project):
     with pytest.raises(NotImplementedError):
-        storage.state().delete("key")
+        storage.state().delete("key", use_browser_storage=False)
 
 
 def test_state_delete_invalid_key(document, project):
     with pytest.raises(ValueError):
-        storage.state().delete(1)
+        storage.state().delete(1, use_browser_storage=False)
 
 
 def test_state_set_invalid_state(document, project):
     with pytest.raises(ValueError):
-        storage.state().set(1, "key")
+        storage.state().set(1, "key", use_browser_storage=False)
 
 
 def test_state_set_invalid_key(document, project):
     with pytest.raises(ValueError):
-        storage.state().set({}, 1)
+        storage.state().set({}, 1, use_browser_storage=False)
 
 
-def test_store_get(document, project):
+def test_store_get_api(document, project):
     with pytest.raises(NotImplementedError):
-        storage.store().get("key")
+        storage.store().get("key", use_browser_storage=False)
 
 
-def test_store_set(document, project):
+def test_store_set_get_and_delete_browser(document, project):
+    key = "test"
+    value = {"test": "test_value"}
+
+    storage.state().set(value, key, use_browser_storage=True)
+    response = storage.state().get(key, use_browser_storage=True)
+
+    assert response == value
+
+    storage.state().delete(key, use_browser_storage=True)
+    response = storage.state().get(key, use_browser_storage=True)
+    assert response == {}
+
+
+def test_store_set_api(document, project):
     with pytest.raises(NotImplementedError):
-        storage.store().set("", "key")
+        storage.store().set("", "key", use_browser_storage=False)
 
 
 def test_store_set_invalid_payload(document, project):
     with pytest.raises(ValueError):
-        storage.store().set(1, "key")
+        storage.store().set(1, "key", use_browser_storage=False)
 
 
 def test_store_set_invalid_key(document, project):
     with pytest.raises(ValueError):
-        storage.store().set("", 1)
+        storage.store().set("", 1, use_browser_storage=False)
 
 
-def test_store_delete(document, project):
+def test_store_delete_api(document, project):
     with pytest.raises(NotImplementedError):
-        storage.store().delete("key")
+        storage.store().delete("key", use_browser_storage=False)
 
 
 def test_store_delete_invalid_key(document, project):
     with pytest.raises(ValueError):
-        storage.store().delete(1)
+        storage.store().delete(1, use_browser_storage=False)
