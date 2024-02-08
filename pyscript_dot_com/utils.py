@@ -26,7 +26,13 @@ def get_project_slug_and_user_from_url() -> tuple[str, str]:
 
     # URL should be in the format of:
     # https://<user>.pyscriptapps.com/<project_slug>/version/<version>
-    parts = url.split("https://")[1].split(".pyscriptapps.com/")
+    if ".pyscriptapps-dev.com" in url:
+        parts = url.split("https://")[1].split(".pyscriptapps-dev.com/")
+    if ".pyscriptapps.com" in url:
+        parts = url.split("https://")[1].split(".pyscriptapps.com/")
+    if "localhost" in url:
+        return "project_slug", "user"
+
     user = parts[0]
     project_slug = parts[1].split("/")[0]
 

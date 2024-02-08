@@ -52,7 +52,7 @@ def test_state_set_get_and_delete_browser(document, project):
     key = "test"
     value = "test_value"
 
-    storage.state().set(value, key, use_browser_storage=True)
+    storage.state().set(key, value, use_browser_storage=True)
     response = storage.state().get(key, use_browser_storage=True)
 
     assert response == value
@@ -74,7 +74,7 @@ def test_state_get_invalid_key(document, project):
 
 def test_state_set_api(document, project):
     with pytest.raises(NotImplementedError):
-        storage.state().set({}, "key", use_browser_storage=False)
+        storage.state().set("key", {}, use_browser_storage=False)
 
 
 def test_state_delete_api(document, project):
@@ -106,7 +106,7 @@ def test_store_set_get_and_delete_browser(document, project):
     key = "test"
     value = {"test": "test_value"}
 
-    storage.state().set(value, key, use_browser_storage=True)
+    storage.state().set(key, value, use_browser_storage=True)
     response = storage.state().get(key, use_browser_storage=True)
 
     assert response == value

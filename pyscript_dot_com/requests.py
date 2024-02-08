@@ -48,14 +48,21 @@ def request(
 
     kwargs["method"] = method
 
+    _headers = {
+        "User-Agent": "PyScript.com",
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+    }
+
     if body and method not in ["GET", "HEAD"]:
         kwargs["json"] = body
     if headers:
-        kwargs["headers"] = headers
+        _headers.update(headers)
     if cookies:
         kwargs["cookies"] = cookies
 
-    result = requests.request(url=url, verify=True, **kwargs)
+    result = requests.request(url=url, headers=_headers, verify=True, **kwargs)
 
     # Not going to raise an exception here otherwise
     # we need to handle it in the callback and is a
@@ -69,7 +76,7 @@ def request(
             "statusText": result.reason,
         }
 
-    if result.headers.get("Content-Type") == "application/json":
+    try:
         return result.json()
-
-    return result.text
+    except Exception:
+        return result.text
