@@ -7,9 +7,12 @@ from pyscript_dot_com.base import BaseDataStore
 
 
 class Datastore(BaseDataStore):
+    def __init__(self):
+        self.storage = window.localStorage
+
     def get(self, key: str):
         """Get a value from datastore."""
-        item = window.localStorage.getItem(key)
+        item = self.storage.getItem(key)
         if item:
             try:
                 return json.loads(item)
@@ -22,30 +25,29 @@ class Datastore(BaseDataStore):
             value = json.dumps(value)
         elif isinstance(value, set):
             value = json.dumps(list(value))
-
-        window.localStorage.setItem(key, value)
+        self.storage.setItem(key, value)
 
     def delete(self, key: str):
         """Delete a value from datastore."""
-        window.localStorage.removeItem(key)
+        self.storage.removeItem(key)
 
     def items(self):
         """Get all items in datastore."""
-        items = window.localStorage.object_items()
+        items = self.storage.object_items()
         if items:
             return items.split(",")
         return []
 
     def values(self):
         """Get all values in datastore."""
-        values = window.localStorage.object_values()
+        values = self.storage.object_values()
         if values:
             return values.split(",")
         return []
 
     def keys(self):
         """Get all keys in datastore."""
-        keys = window.localStorage.object_keys()
+        keys = self.storage.object_keys()
         if keys:
             return keys.split(",")
         return []
@@ -65,7 +67,7 @@ class Datastore(BaseDataStore):
         """Pop the specified item from the data store."""
         if key in self:
             result = self[key]
-            window.localStorage.removeItem(key)
+            self.storage.removeItem(key)
             del self[key]
             return result
         raise KeyError(key)
