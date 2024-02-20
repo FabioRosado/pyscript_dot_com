@@ -50,17 +50,21 @@ class BaseDataStore:
 
     def items(self):
         """Get all items in datastore."""
-        return self._data.items()
+        ...
 
     def keys(self):
         """Get all keys in datastore."""
-        return self._data.keys()
+        ...
 
     def values(self):
         """Get all values in datastore."""
-        return self._data.values()
+        ...
 
     def pop(self, key, default=None):
         """Pop a value from datastore."""
         # This is empty so we can override it in the subclasses
+        ...
+
+    def update(self, *args, **kwargs):
+        """Update datastore with new values."""
         ...
