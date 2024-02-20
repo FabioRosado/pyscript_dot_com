@@ -273,6 +273,3 @@ class store:
             # response = request(f"https://pyscript.com/api/projects/{self.project_id}/storage/{key}", method="DELETE", cookies=self.cookies)
             # return response
             raise NotImplementedError
-            raise NotImplementedError
-            raise NotImplementedError
-            raise NotImplementedError

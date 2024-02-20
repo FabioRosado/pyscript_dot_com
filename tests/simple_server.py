@@ -8,6 +8,9 @@ from threading import Thread
 
 
 class MyHandler(SimpleHTTPRequestHandler):
+    # Add a dictionary to store the data
+    _storage = {}
+
     def do_GET(self):
         """Handle a GET request by returning the JSON data"""
         if self.path == "/exception":
@@ -67,6 +70,36 @@ class MyHandler(SimpleHTTPRequestHandler):
                 }
             )
             self.wfile.write(json_data.encode("utf-8"))
+        elif self.path == "/datastore/test":
+            # Get the key from the path
+            key = self.path.split("/")[-1]
+
+            # Get the value from the datastore
+            value = self._storage.get(key)
+
+            # If the value is not found, return a 404 response
+            if value is None:
+                self.send_response(404)
+                self.end_headers()
+                return
+
+            # Send the headers
+            self._send_headers()
+
+            # Convert the value to JSON
+            json_data = json.dumps(value)
+
+            # Write the JSON string to the response body
+            self.wfile.write(json_data.encode("utf-8"))
+        elif self.path == "/datastore":
+            # Send the headers
+            self._send_headers()
+
+            # Convert the datastore to JSON
+            json_data = json.dumps(self._storage)
+
+            # Write the JSON string to the response body
+            self.wfile.write(json_data.encode("utf-8"))
         else:
             self._send_headers()
 
@@ -87,6 +120,19 @@ class MyHandler(SimpleHTTPRequestHandler):
         post_data = self.rfile.read(content_length)
 
         self._send_headers()
+
+        if self.path == "/datastore/test":
+            # Convert the JSON string to a dictionary
+            data = json.loads(post_data.decode("utf-8"))
+
+            # Store the data in the datastore
+            self._storage.update(data)
+
+            # Convert the dictionary to JSON string
+            json_data = json.dumps(data)
+
+            # Write the JSON string to the response body
+            self.wfile.write(json_data.encode("utf-8"))
 
         if self.path == "/api/projects/cd0350f0/files":
             match = re.search(r'filename="([^"]+)"', post_data.decode("utf-8"))

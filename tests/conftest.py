@@ -27,9 +27,17 @@ def document():
         yield mocked_document
 
 
+# @pytest.fixture()
+# def project(document, running_server):
+#     with mock.patch(
+#         "pyscript_dot_com.project.PSDC_DOMAIN", new=running_server["address"]
+#     ) as mocked_domain:
+#         yield mocked_domain
+
+
 @pytest.fixture()
-def project(document, running_server):
+def project(running_server):
     with mock.patch(
-        "pyscript_dot_com.storage.PSDC_DOMAIN", new=running_server["address"]
+        "pyscript_dot_com.project.PSDC_DOMAIN", new=running_server["address"]
     ) as mocked_domain:
         yield mocked_domain

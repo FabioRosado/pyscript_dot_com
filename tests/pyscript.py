@@ -24,6 +24,26 @@ class localStorage:
         """Remove item from local storage."""
         self.storage.pop(key, None)
 
+    def clear(self):
+        """Clear local storage."""
+        self.storage = {}
+
+    def object_keys(self):
+        """Get keys from local storage."""
+        return ",".join(self.storage.keys())
+
+    def object_values(self):
+        """Get values from local storage."""
+        return ",".join(self.storage.values())
+
+    def object_items(self):
+        """Get items from local storage."""
+        items = []
+        for key, value in self.storage.items():
+            items.append(f"{key},{value}")
+
+        return ",".join(items)
+
 
 class window:
     """Mocked window class."""

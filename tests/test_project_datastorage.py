@@ -14,7 +14,7 @@ def test_project_setdefault():
     assert response == None
 
 
-def test_project_set():
+def test_project_set(project):
     project.datastore.set("test", "test_value")
     response = project.datastore.get("test")
 
@@ -90,3 +90,20 @@ def test_project_update_as_dict():
     project.datastore.delete("test")
     response = project.datastore.get("test")
     assert response == None
+
+
+def test_project_iter():
+    project.datastore.set("test", "test_value")
+    project.datastore.set("test2", "test_value2")
+
+    for key, value in project.datastore:
+        assert key in ["test", "test2"]
+        assert value in ["test_value", "test_value2"]
+
+    response = list(iter(project.datastore))
+    assert response == [("test", "test_value"), ("test2", "test_value2")]
+
+    project.datastore.delete("test")
+    project.datastore.delete("test2")
+    response = list(iter(project.datastore))
+    assert response == []
