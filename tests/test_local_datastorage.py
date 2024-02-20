@@ -135,3 +135,14 @@ def test_local_keys():
     local.datastore.delete("test")
     keys = local.datastore.keys()
     assert keys == []
+
+
+def test_local_length():
+    local.datastore.set("test", "test_value")
+    length = len(local.datastore)
+
+    assert length == 1
+
+    local.datastore.delete("test")
+    length = len(local.datastore)
+    assert length == 0
