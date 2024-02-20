@@ -26,6 +26,7 @@ class Datastore(BaseDataStore):
         elif isinstance(value, set):
             value = json.dumps(list(value))
         self.storage.setItem(key, value)
+        return value
 
     def delete(self, key: str):
         """Delete a value from datastore."""
