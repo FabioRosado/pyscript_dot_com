@@ -56,7 +56,7 @@ def test_local_delete():
 def test_local_items():
     local.datastore.set("test", "test_value")
     items = local.datastore.items()
-    assert items == ["test", "test_value"]
+    assert items == [("test", "test_value")]
 
 
 def test_loal_set_dict():
