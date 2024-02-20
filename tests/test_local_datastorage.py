@@ -101,8 +101,8 @@ def test_local_contains():
 
 
 def test_local_copy():
-    data = local.datastore["test"] = "test_value"
-    copied_dict = data.copy()
+    local.datastore["test"] = "test_value"
+    copied_dict = local.datastore.copy()
     assert copied_dict == {"test": "test_value"}
 
 

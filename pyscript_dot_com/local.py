@@ -82,7 +82,11 @@ class Datastore(BaseDataStore):
 
     def copy(self):
         """Return a shallow copy of the data store."""
-        return {k: v for k, v in self.items()}
+        result = {}
+        for key in self.keys():
+            value = self[key]
+            result[key] = value
+        return result
 
 
 datastore = Datastore()
