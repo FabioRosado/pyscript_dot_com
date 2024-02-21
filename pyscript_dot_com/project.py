@@ -12,38 +12,49 @@ class Datastore(BaseDataStore):
     def __init__(self):
         # This is used as a basic cache
         self._data = {}
+        self.api_base = PSDC_DOMAIN
 
     def get(self, key: str):
         """Get a value from datastore."""
-        return self._data.get(key)
+        result = request(f"{self.api_base}/datastore/{key}")
+
+        return self._handle_response(result, key)
 
     def set(self, key: str, value: Any):
         """Set a value in datastore."""
-        # if isinstance(value, dict):
-        #     value = json.dumps(value)
-        # elif isinstance(value, set):
-        #     value = json.dumps(list(value))
-        self._data[key] = value
-        return value
+        if isinstance(value, dict):
+            value = json.dumps(value)
+        elif isinstance(value, set):
+            value = json.dumps(list(value))
+
+        result = request(f"{self.api_base}/datastore", method="POST", json={key: value})
+        return self._handle_response(result, key)
 
     def delete(self, key: str):
         """Delete a value from datastore."""
+        request(f"{self.api_base}/datastore/{key}", method="DELETE")
         del self._data[key]
 
     def items(self):
         """Get all items in datastore."""
         # In this case we should always hit the DB and
         # return the latest data, plus updating `self._data`
+        result = request(f"{self.api_base}/datastore")
+        if self._is_api_error(result):
+            return []
+        self.data = result
         return list(self._data.items())
 
     def values(self):
         """Get all values in datastore."""
-        # Here we should probably hit the DB so we always have the latest data?
+        # TODO: Should we call .items here so we avoid
+        # desync between local and remote data?
         return list(self._data.values())
 
     def keys(self):
         """Get all keys in datastore."""
-        # Here we should probably hit the DB so we always have the latest data?
+        # TODO: Should we call .items here so we avoid
+        # desync between local and remote data?
         return list(self._data.keys())
 
     def contains(self, key: str):
@@ -75,15 +86,38 @@ class Datastore(BaseDataStore):
                 new_items.update(arg)
         new_items.update(kwargs)
         for key, value in new_items.items():
+            # TODO: Need to check if this update remote data
             self[key] = value
 
     def copy(self):
-        """Return a shallow copy of the data store."""
+        """Return a shallow copy of the data store.
+
+        This is a shallow copy, so the data is not duplicated
+        in the remote server and will only be available in the
+        local instance.
+
+        """
         result = {}
         for key in self.keys():
             value = self[key]
             result[key] = value
         return result
+
+    def _is_api_error(self, response):
+        """Check if the response from the API is an error."""
+        return not isinstance(response, dict) or response.get("error")
+
+    def _handle_response(self, response, key):
+        """Handle the response from the API.
+
+        Helper function to remove duplication
+        """
+        if self._is_api_error(response):
+            return None
+
+        value = response.get(key)
+        self._data[key] = value
+        return value
 
 
 datastore = Datastore()

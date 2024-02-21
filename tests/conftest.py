@@ -27,17 +27,9 @@ def document():
         yield mocked_document
 
 
-# @pytest.fixture()
-# def project(document, running_server):
-#     with mock.patch(
-#         "pyscript_dot_com.project.PSDC_DOMAIN", new=running_server["address"]
-#     ) as mocked_domain:
-#         yield mocked_domain
-
-
 @pytest.fixture()
-def project(running_server):
+def fake_api(running_server):
     with mock.patch(
-        "pyscript_dot_com.project.PSDC_DOMAIN", new=running_server["address"]
-    ) as mocked_domain:
-        yield mocked_domain
+        "pyscript_dot_com.project.datastore.api_base", new=running_server["address"]
+    ) as project_datastore:
+        yield project_datastore

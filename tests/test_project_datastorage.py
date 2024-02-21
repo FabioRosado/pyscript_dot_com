@@ -3,45 +3,35 @@ import pytest
 from pyscript_dot_com import project
 
 
-def test_project_setdefault():
+def test_project_setdefault(fake_api):
     project.datastore.setdefault("test", "test_value")
-    response = project.datastore.get("test")
+    value = project.datastore.get("test")
 
-    assert response == "test_value"
+    assert value == "test_value"
 
     project.datastore.delete("test")
-    response = project.datastore.get("test")
-    assert response == None
+    value = project.datastore.get("test")
+    assert value is None
 
 
-def test_project_set():
+def test_project_set_get_delete(fake_api):
+
     project.datastore.set("test", "test_value")
-    response = project.datastore.get("test")
+    value = project.datastore.get("test")
 
-    assert response == "test_value"
-
-    project.datastore.delete("test")
-    response = project.datastore.get("test")
-    assert response == None
-
-
-def test_project_get():
-    project.datastore.set("test", "test_value")
-    response = project.datastore.get("test")
-
-    assert response == "test_value"
+    assert value == "test_value"
 
     project.datastore.delete("test")
+    value = project.datastore.get("test")
+    assert value is None
+
+
+def test_project_get_not_there(fake_api):
     response = project.datastore.get("test")
     assert response == None
 
 
-def test_project_get_not_there():
-    response = project.datastore.get("test")
-    assert response == None
-
-
-def test_project_delete():
+def test_project_delete(fake_api):
     project.datastore.set("test", "test_value")
     value = project.datastore.get("test")
 
@@ -52,7 +42,7 @@ def test_project_delete():
     assert value == None
 
 
-def test_project_items():
+def test_project_items(fake_api):
     project.datastore.set("test", "test_value")
     items = project.datastore.items()
 
@@ -60,10 +50,7 @@ def test_project_items():
     assert items == expected_value
 
 
-@pytest.mark.xfail(
-    reason="We expect this to fail until we implement the paginate_items method"
-)
-def test_project_paginate_items():
+def test_project_paginate_items(fake_api):
     project.datastore.set("test", "test_value")
     response = project.datastore.paginate_items()
 
@@ -74,18 +61,18 @@ def test_project_paginate_items():
     assert response == []
 
 
-def test_project_set_as_dict():
+def test_project_set_as_dict(fake_api):
     project.datastore["test"] = "test_value"
-    response = project.datastore.get("test")
+    value = project.datastore.get("test")
 
-    assert response == "test_value"
+    assert value == "test_value"
 
     project.datastore.delete("test")
-    response = project.datastore.get("test")
-    assert response == None
+    value = project.datastore.get("test")
+    assert value is None
 
 
-def test_project_update_as_dict():
+def test_project_update_as_dict(fake_api):
     project.datastore["test"] = "test_value"
     project.datastore["test"] = "new_test_value"
     response = project.datastore.get("test")
@@ -97,7 +84,7 @@ def test_project_update_as_dict():
     assert response == None
 
 
-def test_project_iter():
+def test_project_iter(fake_api):
     project.datastore.set("test", "test_value")
     project.datastore.set("test2", "test_value2")
 
@@ -114,7 +101,7 @@ def test_project_iter():
     assert response == []
 
 
-def test_project_contains():
+def test_project_contains(fake_api):
     project.datastore.set("test", "test_value")
     key_exists = project.datastore.contains("test")
 
@@ -125,13 +112,13 @@ def test_project_contains():
     assert key_exists == False
 
 
-def test_project_copy():
+def test_project_copy(fake_api):
     project.datastore["test"] = "test_value"
     copied_dict = project.datastore.copy()
     assert copied_dict == {"test": "test_value"}
 
 
-def test_project_pop():
+def test_project_pop(fake_api):
     project.datastore.set("test", "test_value")
     poped_value = project.datastore.pop("test")
 
@@ -140,7 +127,7 @@ def test_project_pop():
         project.datastore.pop("test")
 
 
-def test_project_values():
+def test_project_values(fake_api):
     project.datastore.set("test", "test_value")
     values = project.datastore.values()
 
@@ -151,7 +138,7 @@ def test_project_values():
     assert list(response) == []
 
 
-def test_project_keys():
+def test_project_keys(fake_api):
     project.datastore.set("test", "test_value")
     keys = project.datastore.keys()
 
@@ -162,7 +149,7 @@ def test_project_keys():
     assert keys == []
 
 
-def test_project_length():
+def test_project_length(fake_api):
     project.datastore.set("test", "test_value")
     length = len(project.datastore)
 

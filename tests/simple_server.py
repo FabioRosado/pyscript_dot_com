@@ -70,33 +70,30 @@ class MyHandler(SimpleHTTPRequestHandler):
                 }
             )
             self.wfile.write(json_data.encode("utf-8"))
-        elif self.path == "/datastore/test":
+        elif "datastore" in self.path:
             # Get the key from the path
-            key = self.path.split("/")[-1]
+            parts = self.path.split("/")
+            if len(parts) == 3:
+                key = self.path.split("/")[-1]
 
-            # Get the value from the datastore
-            value = self._storage.get(key)
+                # Get the value from the datastore
+                value = self._storage.get(key)
 
-            # If the value is not found, return a 404 response
-            if value is None:
-                self.send_response(404)
-                self.end_headers()
-                return
+                # If the value is not found, return a 404 response
+                if value is None:
+                    self.send_response(404)
+                    self.end_headers()
+                    return
 
-            # Send the headers
-            self._send_headers()
-
-            # Convert the value to JSON
-            json_data = json.dumps(value)
-
-            # Write the JSON string to the response body
-            self.wfile.write(json_data.encode("utf-8"))
-        elif self.path == "/datastore":
-            # Send the headers
-            self._send_headers()
-
-            # Convert the datastore to JSON
-            json_data = json.dumps(self._storage)
+                # Send the headers
+                self._send_headers()
+                # Convert the value to JSON
+                json_data = json.dumps({key: value})
+            else:
+                # Send the headers
+                self._send_headers()
+                # Convert the datastore to JSON
+                json_data = json.dumps(self._storage)
 
             # Write the JSON string to the response body
             self.wfile.write(json_data.encode("utf-8"))
@@ -119,20 +116,18 @@ class MyHandler(SimpleHTTPRequestHandler):
         content_length = int(self.headers["Content-Length"])
         post_data = self.rfile.read(content_length)
 
-        self._send_headers()
+        self._send_headers(201)
 
-        if self.path == "/datastore/test":
+        if self.path == "/datastore":
             # Convert the JSON string to a dictionary
             data = json.loads(post_data.decode("utf-8"))
 
             # Store the data in the datastore
             self._storage.update(data)
 
-            # Convert the dictionary to JSON string
-            json_data = json.dumps(data)
-
             # Write the JSON string to the response body
-            self.wfile.write(json_data.encode("utf-8"))
+            self.wfile.write(post_data)
+            return
 
         if self.path == "/api/projects/cd0350f0/files":
             match = re.search(r'filename="([^"]+)"', post_data.decode("utf-8"))
@@ -149,9 +144,24 @@ class MyHandler(SimpleHTTPRequestHandler):
             # Now let's just send the same data back
             self.wfile.write(post_data)
 
-    def _send_headers(self, content_type="application/json"):
+    def do_DELETE(self):
+        """Handle a DELETE request by returning the same data"""
+        if "datastore" in self.path:
+            # Get the key from the path
+            key = self.path.split("/")[-1]
+
+            # Delete the value from the datastore
+            del self._storage[key]
+
+            # Send the headers
+            self._send_headers(204)
+        else:
+            # Send the headers
+            self._send_headers(204)
+
+    def _send_headers(self, status=200, content_type="application/json"):
         """Send the headers for the response"""  # Return a 200 response
-        self.send_response(200)
+        self.send_response(status)
         # Set the right headers
         self.send_header("Content-type", content_type)
         self.end_headers()

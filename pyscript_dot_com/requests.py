@@ -56,6 +56,7 @@ def request(
     }
 
     if body and method not in ["GET", "HEAD"]:
+        _headers["Accept-Encoding"] = "application/json"
         kwargs["json"] = body
     if headers:
         _headers.update(headers)
