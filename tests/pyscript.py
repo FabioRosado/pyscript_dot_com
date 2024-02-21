@@ -7,6 +7,31 @@ class document:
     URL = "http://localhost:5000"
 
 
+# Very basic way to mock pyodide ffi
+class object_keys:
+    def __init__(self, storage):
+        self.storage = storage
+
+    def to_py(self):
+        return list(self.storage.keys())
+
+
+class object_values:
+    def __init__(self, storage):
+        self.storage = storage
+
+    def to_py(self):
+        return list(self.storage.values())
+
+
+class object_items(object_keys):
+    def __init__(self, storage):
+        self.storage = storage
+
+    def to_py(self):
+        return list(self.storage.items())
+
+
 class localStorage:
     """Mocked localStorage class."""
 
@@ -30,19 +55,16 @@ class localStorage:
 
     def object_keys(self):
         """Get keys from local storage."""
-        return ",".join(self.storage.keys())
+        return object_keys(self.storage)
+        # return ",".join(self.storage.keys())
 
     def object_values(self):
         """Get values from local storage."""
-        return ",".join(self.storage.values())
+        return object_values(self.storage)
 
     def object_items(self):
         """Get items from local storage."""
-        items = []
-        for key, value in self.storage.items():
-            items.append(f"{key},{value}")
-
-        return ",".join(items)
+        return object_items(self.storage)
 
 
 class window:

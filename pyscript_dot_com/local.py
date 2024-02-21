@@ -21,10 +21,10 @@ class Datastore(BaseDataStore):
 
     def set(self, key: str, value: Any):
         """Set a value in datastore."""
-        if isinstance(value, dict):
-            value = json.dumps(value)
-        elif isinstance(value, set):
+        if isinstance(value, set):
             value = json.dumps(list(value))
+        elif type(value) in [dict, list]:
+            value = json.dumps(value)
         self.storage.setItem(key, value)
         return value
 
@@ -34,25 +34,23 @@ class Datastore(BaseDataStore):
 
     def items(self):
         """Get all items in datastore."""
-        items = []
-        for key in self.keys():
-            items.append((key, self.get(key)))
+        items = self.storage.object_items()
+        return items.to_py()
+        # items = []
+        # for key in self.keys():
+        #     items.append((key, self.get(key)))
 
-        return items
+        # return items
 
     def values(self):
         """Get all values in datastore."""
         values = self.storage.object_values()
-        if values:
-            return values.split(",")
-        return []
+        return values.to_py()
 
     def keys(self):
         """Get all keys in datastore."""
         keys = self.storage.object_keys()
-        if keys:
-            return keys.split(",")
-        return []
+        return keys.to_py()
 
     def contains(self, key: str):
         """Check if a key exists in the datastore."""
