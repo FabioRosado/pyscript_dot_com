@@ -86,7 +86,6 @@ class Datastore(BaseDataStore):
                 new_items.update(arg)
         new_items.update(kwargs)
         for key, value in new_items.items():
-            # TODO: Need to check if this update remote data
             self[key] = value
 
     def copy(self):
@@ -102,6 +101,14 @@ class Datastore(BaseDataStore):
             value = self[key]
             result[key] = value
         return result
+
+    def paginate_items(self, count: int = 10):
+        """Paginate items in datastore."""
+        result = request(f"{self.api_base}/datastore", params={"count": count})
+        if self._is_api_error(result):
+            return []
+        self.data = result
+        return list(self._data.items())
 
     def _is_api_error(self, response):
         """Check if the response from the API is an error."""

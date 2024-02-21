@@ -90,6 +90,11 @@ class MyHandler(SimpleHTTPRequestHandler):
                 # Convert the value to JSON
                 json_data = json.dumps({key: value})
             else:
+                if "?count" in self.path:
+                    count = int(self.path.split("=")[-1])
+                    items = list(self._storage.items())
+                    items = items[:count]
+                    json_data = json.dumps(items)
                 # Send the headers
                 self._send_headers()
                 # Convert the datastore to JSON

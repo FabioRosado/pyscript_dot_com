@@ -92,5 +92,9 @@ class Datastore(BaseDataStore):
             result[key] = value
         return result
 
+    def paginate_items(self, count: int = 10):
+        items = self.items()
+        return items[:count]
+
 
 datastore = Datastore()
