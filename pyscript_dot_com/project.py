@@ -4,15 +4,15 @@ from typing import Any
 from pyscript import window
 
 from pyscript_dot_com.base import BaseDataStore
-from pyscript_dot_com.const import PSDC_DOMAIN
 from pyscript_dot_com.requests import request
+from pyscript_dot_com.utils import get_base_url
 
 
 class Datastore(BaseDataStore):
     def __init__(self):
         # This is used as a basic cache
         self._data = {}
-        self.api_base = PSDC_DOMAIN
+        self.api_base = get_base_url()
 
     def get(self, key: str):
         """Get a value from datastore."""
