@@ -34,13 +34,8 @@ class Datastore(BaseDataStore):
 
     def items(self):
         """Get all items in datastore."""
-        items = self.storage.object_items()
+        items = self.storage.object_entries()
         return items.to_py()
-        # items = []
-        # for key in self.keys():
-        #     items.append((key, self.get(key)))
-
-        # return items
 
     def values(self):
         """Get all values in datastore."""

@@ -24,7 +24,7 @@ class object_values:
         return list(self.storage.values())
 
 
-class object_items(object_keys):
+class object_entries(object_keys):
     def __init__(self, storage):
         self.storage = storage
 
@@ -62,9 +62,9 @@ class localStorage:
         """Get values from local storage."""
         return object_values(self.storage)
 
-    def object_items(self):
+    def object_entries(self):
         """Get items from local storage."""
-        return object_items(self.storage)
+        return object_entries(self.storage)
 
 
 class window:
