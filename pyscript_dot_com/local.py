@@ -25,6 +25,8 @@ class Datastore(BaseDataStore):
             value = json.dumps(list(value))
         elif type(value) in [dict, list]:
             value = json.dumps(value)
+        else:
+            value = str(value)
         self.storage.setItem(key, value)
         return value
 

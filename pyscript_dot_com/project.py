@@ -1,3 +1,4 @@
+import contextlib
 import json
 from typing import Any
 
@@ -26,14 +27,24 @@ class Datastore(BaseDataStore):
             value = json.dumps(value)
         elif isinstance(value, set):
             value = json.dumps(list(value))
+        else:
+            # Should we always convert to string?
+            value = str(value)
 
-        result = request(f"{self.api_base}/datastore", method="POST", json={key: value})
+        result = request(
+            f"{self.api_base}/datastore",
+            method="POST",
+            body={"key": key, "value": value},
+        )
         return self._handle_response(result, key)
 
     def delete(self, key: str):
         """Delete a value from datastore."""
         request(f"{self.api_base}/datastore/{key}", method="DELETE")
-        del self._data[key]
+        # We can't be sure that the key is in self._data so let's
+        # just suppress the error
+        with contextlib.suppress(KeyError):
+            del self._data[key]
 
     def items(self):
         """Get all items in datastore."""
@@ -42,19 +53,21 @@ class Datastore(BaseDataStore):
         result = request(f"{self.api_base}/datastore")
         if self._is_api_error(result):
             return []
-        self.data = result
+        self._data = result
         return list(self._data.items())
 
     def values(self):
         """Get all values in datastore."""
-        # TODO: Should we call .items here so we avoid
-        # desync between local and remote data?
+        # Call .items first to make sure we get everything
+        # in the remote server
+        self.items()
         return list(self._data.values())
 
     def keys(self):
         """Get all keys in datastore."""
-        # TODO: Should we call .items here so we avoid
-        # desync between local and remote data?
+        # Call .items first to make sure we get everything
+        # in the remote server
+        self.items()
         return list(self._data.keys())
 
     def contains(self, key: str):
@@ -70,12 +83,21 @@ class Datastore(BaseDataStore):
 
     def pop(self, key, default=None):
         """Pop the specified item from the data store."""
+        result = None
         if key in self:
             result = self[key]
             # Since we are already getting the key we can probably
             # just remove it from the db
             del self[key]
             return result
+        else:
+            # If the key is not in cache, get it!
+            result = self.get(key)
+            self.delete(key)
+
+        if result is None and default is not None:
+            return default
+
         raise KeyError(key)
 
     def update(self, *args, **kwargs):
@@ -107,7 +129,7 @@ class Datastore(BaseDataStore):
         result = request(f"{self.api_base}/datastore", params={"count": count})
         if self._is_api_error(result):
             return []
-        self.data = result
+        self._data = result
         return list(self._data.items())
 
     def _is_api_error(self, response):
