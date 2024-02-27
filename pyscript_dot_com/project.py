@@ -144,7 +144,18 @@ class Datastore(BaseDataStore):
         if self._is_api_error(response):
             return None
 
-        value = response.get(key)
+        if self._is_api_error(response):
+            return None
+
+        _value = response.get(key)
+
+        # _value may be a list such as "['one', 'two']" which
+        # will cause it to fail. We will try to convert it
+        try:
+            value = json.loads(_value.strip('"').replace("'", '"'))
+        except Exception:
+            value = _value
+
         self._data[key] = value
         return value
 
