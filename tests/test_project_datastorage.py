@@ -118,13 +118,13 @@ def test_project_copy(fake_api):
     assert copied_dict == {"test": "test_value"}
 
 
-# def test_project_pop(fake_api):
-#     project.datastore.set("test", "test_value")
-#     poped_value = project.datastore.pop("test")
+def test_project_pop(fake_api):
+    project.datastore.set("test", "test_value")
+    poped_value = project.datastore.pop("test")
 
-#     assert poped_value == "test_value"
-#     with pytest.raises(KeyError):
-#         project.datastore.pop("test")
+    assert poped_value == "test_value"
+    with pytest.raises(KeyError):
+        project.datastore.pop("test")
 
 
 def test_project_values(fake_api):

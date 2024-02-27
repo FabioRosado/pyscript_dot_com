@@ -156,11 +156,17 @@ class MyHandler(SimpleHTTPRequestHandler):
             # Get the key from the path
             key = self.path.split("/")[-1]
 
-            # Delete the value from the datastore
-            del self._storage[key]
+            # Delete the value from the datastore if exists
+            try:
+                del self._storage[key]
+                # Send the headers
+                self._send_headers(204)
 
-            # Send the headers
-            self._send_headers(204)
+            except KeyError:
+                self.send_response(404)
+                self.end_headers()
+                return
+
         else:
             # Send the headers
             self._send_headers(204)
