@@ -127,6 +127,7 @@ class MyHandler(SimpleHTTPRequestHandler):
             # Convert the JSON string to a dictionary
             data = json.loads(post_data.decode("utf-8"))
 
+            data = {data["key"]: data["value"]}
             # Store the data in the datastore
             self._storage.update(data)
 
