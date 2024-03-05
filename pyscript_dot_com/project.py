@@ -72,7 +72,12 @@ class Datastore(BaseDataStore):
 
     def contains(self, key: str):
         """Check if a key exists in the datastore."""
-        return key in self.keys()
+        # Get the key from the remove server
+        result = request(f"{self.api_base}/datastore/{key}")
+        if self._is_api_error(result):
+            return False
+
+        return True if result.get(key) else False
 
     def setdefault(self, key: str, default=None):
         """Implement setdefault method."""
@@ -83,22 +88,15 @@ class Datastore(BaseDataStore):
 
     def pop(self, key, default=None):
         """Pop the specified item from the data store."""
-        result = None
-        if key in self:
-            result = self[key]
-            # Since we are already getting the key we can probably
-            # just remove it from the db
-            del self[key]
-            return result
-        else:
-            # If the key is not in cache, get it!
-            result = self.get(key)
-            self.delete(key)
-
-        if result is None and default is not None:
+        result = request(f"{self.api_base}/datastore/{key}?pop=true", method="DELETE")
+        if self._is_api_error(result):
             return default
 
-        raise KeyError(key)
+        # Just remove it from the local cache
+        with contextlib.suppress(KeyError):
+            del self._data[key]
+
+        return result.get("value", default)
 
     def update(self, *args, **kwargs):
         """For each key/value pair in the iterable."""
@@ -107,8 +105,15 @@ class Datastore(BaseDataStore):
             if isinstance(arg, dict):
                 new_items.update(arg)
         new_items.update(kwargs)
-        for key, value in new_items.items():
-            self[key] = value
+
+        result = request(f"{self.api_base}/datastore", method="PUT", body=new_items)
+
+        # If we have an error, let's make cache the new items.
+        if self._is_api_error(result):
+            self._data = new_items
+            return new_items
+
+        return new_items if self._is_api_error(result) else result
 
     def copy(self):
         """Return a shallow copy of the data store.
