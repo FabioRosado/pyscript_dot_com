@@ -15,7 +15,7 @@ class Datastore(BaseDataStore):
 
     def get(self, key: str):
         """Get a value from datastore."""
-        result = request(f"{self.api_base}/datastore/{key}")
+        result = request(f"{self.api_base}/my/datastore/{key}")
 
         return self._handle_response(result, key)
 
@@ -30,7 +30,7 @@ class Datastore(BaseDataStore):
             value = str(value)
 
         result = request(
-            f"{self.api_base}/datastore",
+            f"{self.api_base}/my/datastore",
             method="POST",
             body={"key": key, "value": value},
         )
@@ -38,7 +38,7 @@ class Datastore(BaseDataStore):
 
     def delete(self, key: str):
         """Delete a value from datastore."""
-        request(f"{self.api_base}/datastore/{key}", method="DELETE")
+        request(f"{self.api_base}/my/datastore/{key}", method="DELETE")
         # We can't be sure that the key is in self._data so let's
         # just suppress the error
         with contextlib.suppress(KeyError):
@@ -48,7 +48,7 @@ class Datastore(BaseDataStore):
         """Get all items in datastore."""
         # In this case we should always hit the DB and
         # return the latest data, plus updating `self._data`
-        result = request(f"{self.api_base}/datastore")
+        result = request(f"{self.api_base}/my/datastore")
         if self._is_api_error(result):
             return []
         self._data = result
@@ -71,7 +71,7 @@ class Datastore(BaseDataStore):
     def contains(self, key: str):
         """Check if a key exists in the datastore."""
         # Get the key from the remove server
-        result = request(f"{self.api_base}/datastore/{key}")
+        result = request(f"{self.api_base}/my/datastore/{key}")
         if self._is_api_error(result):
             return False
 
@@ -86,7 +86,9 @@ class Datastore(BaseDataStore):
 
     def pop(self, key, default=None):
         """Pop the specified item from the data store."""
-        result = request(f"{self.api_base}/datastore/{key}?pop=true", method="DELETE")
+        result = request(
+            f"{self.api_base}/my/datastore/{key}?pop=true", method="DELETE"
+        )
         if self._is_api_error(result):
             return default
 
@@ -104,7 +106,7 @@ class Datastore(BaseDataStore):
                 new_items.update(arg)
         new_items.update(kwargs)
 
-        result = request(f"{self.api_base}/datastore", method="PUT", body=new_items)
+        result = request(f"{self.api_base}/my/datastore", method="PUT", body=new_items)
 
         # If we have an error, let's make cache the new items.
         if self._is_api_error(result):
@@ -129,7 +131,7 @@ class Datastore(BaseDataStore):
 
     def paginate_items(self, count: int = 10):
         """Paginate items in datastore."""
-        result = request(f"{self.api_base}/datastore", params={"count": count})
+        result = request(f"{self.api_base}/my/datastore", params={"count": count})
         if self._is_api_error(result):
             return []
         self._data = result
