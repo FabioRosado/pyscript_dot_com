@@ -39,7 +39,12 @@ def get_project_slug_and_user_from_url() -> tuple[str, str]:
     return project_slug, user
 
 
-def get_base_url() -> str:
+def get_base_url(include_project_slug: bool = True) -> str:
     """Get current page url without version."""
     url = get_page_url()
-    return "/".join(url.split("/")[:-2])
+
+    if include_project_slug:
+        parts = url.split("/")[:-2]
+    else:
+        parts = url.split("/")[:-3]
+    return "/".join(parts)

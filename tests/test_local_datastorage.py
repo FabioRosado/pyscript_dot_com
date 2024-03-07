@@ -148,7 +148,7 @@ def test_local_length():
     assert length == 0
 
 
-def test_project_paginate_items(fake_api):
+def test_project_paginate_items(fake_project_api):
     local.datastore.set("test", "test_value")
     response = local.datastore.paginate_items()
 

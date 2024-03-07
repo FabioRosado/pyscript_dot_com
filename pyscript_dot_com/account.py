@@ -11,7 +11,7 @@ class Datastore(BaseDataStore):
     def __init__(self):
         # This is used as a basic cache
         self._data = {}
-        self.api_base = get_base_url()
+        self.api_base = get_base_url(include_project_slug=False)
 
     def get(self, key: str):
         """Get a value from datastore."""

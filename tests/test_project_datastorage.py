@@ -3,7 +3,15 @@ import pytest
 from pyscript_dot_com import project
 
 
-def test_project_setdefault(fake_api):
+@pytest.fixture()
+def cleanup():
+    yield
+    keys = project.datastore.keys()
+    for key in keys:
+        project.datastore.delete(key)
+
+
+def test_project_setdefault(fake_project_api, cleanup):
     project.datastore.setdefault("test", "test_value")
     value = project.datastore.get("test")
 
@@ -14,7 +22,7 @@ def test_project_setdefault(fake_api):
     assert value is None
 
 
-def test_project_set_get_delete(fake_api):
+def test_project_set_get_delete(fake_project_api, cleanup):
 
     project.datastore.set("test", "test_value")
     value = project.datastore.get("test")
@@ -26,12 +34,12 @@ def test_project_set_get_delete(fake_api):
     assert value is None
 
 
-def test_project_get_not_there(fake_api):
+def test_project_get_not_there(fake_project_api, cleanup):
     response = project.datastore.get("test")
     assert response == None
 
 
-def test_project_delete(fake_api):
+def test_project_delete(fake_project_api, cleanup):
     project.datastore.set("test", "test_value")
     value = project.datastore.get("test")
 
@@ -42,7 +50,7 @@ def test_project_delete(fake_api):
     assert value == None
 
 
-def test_project_items(fake_api):
+def test_project_items(fake_project_api, cleanup):
     project.datastore.set("test", "test_value")
     items = project.datastore.items()
 
@@ -50,7 +58,7 @@ def test_project_items(fake_api):
     assert items == expected_value
 
 
-def test_project_paginate_items(fake_api):
+def test_project_paginate_items(fake_project_api, cleanup):
     project.datastore.set("test", "test_value")
     response = project.datastore.paginate_items()
 
@@ -61,7 +69,7 @@ def test_project_paginate_items(fake_api):
     assert response == []
 
 
-def test_project_set_as_dict(fake_api):
+def test_project_set_as_dict(fake_project_api, cleanup):
     project.datastore["test"] = "test_value"
     value = project.datastore.get("test")
 
@@ -72,7 +80,7 @@ def test_project_set_as_dict(fake_api):
     assert value is None
 
 
-def test_project_update_as_dict(fake_api):
+def test_project_update_as_dict(fake_project_api, cleanup):
     project.datastore["test"] = "test_value"
     project.datastore["test"] = "new_test_value"
     response = project.datastore.get("test")
@@ -84,7 +92,7 @@ def test_project_update_as_dict(fake_api):
     assert response == None
 
 
-def test_project_iter(fake_api):
+def test_project_iter(fake_project_api, cleanup):
     project.datastore.set("test", "test_value")
     project.datastore.set("test2", "test_value2")
 
@@ -101,7 +109,7 @@ def test_project_iter(fake_api):
     assert response == []
 
 
-def test_project_contains(fake_api):
+def test_project_contains(fake_project_api, cleanup):
     project.datastore.set("test", "test_value")
     key_exists = project.datastore.contains("test")
 
@@ -112,22 +120,23 @@ def test_project_contains(fake_api):
     assert key_exists == False
 
 
-def test_project_copy(fake_api):
+def test_project_copy(fake_project_api, cleanup):
     project.datastore["test"] = "test_value"
     copied_dict = project.datastore.copy()
     assert copied_dict == {"test": "test_value"}
 
 
-def test_project_pop(fake_api):
+def test_project_pop(fake_project_api, cleanup):
     project.datastore.set("test", "test_value")
     poped_value = project.datastore.pop("test")
 
     assert poped_value == "test_value"
-    with pytest.raises(KeyError):
-        project.datastore.pop("test")
+
+    value = project.datastore.pop("test")
+    assert value is None
 
 
-def test_project_values(fake_api):
+def test_project_values(fake_project_api, cleanup):
     project.datastore.set("test", "test_value")
     values = project.datastore.values()
 
@@ -138,7 +147,7 @@ def test_project_values(fake_api):
     assert list(response) == []
 
 
-def test_project_keys(fake_api):
+def test_project_keys(fake_project_api, cleanup):
     project.datastore.set("test", "test_value")
     keys = project.datastore.keys()
 
@@ -149,7 +158,7 @@ def test_project_keys(fake_api):
     assert keys == []
 
 
-def test_project_length(fake_api):
+def test_project_length(fake_project_api, cleanup):
     project.datastore.set("test", "test_value")
     length = len(project.datastore)
 

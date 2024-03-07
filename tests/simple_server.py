@@ -73,7 +73,7 @@ class MyHandler(SimpleHTTPRequestHandler):
         elif "datastore" in self.path:
             # Get the key from the path
             parts = self.path.split("/")
-            if len(parts) == 3:
+            if len(parts) == 3 and not "my" in parts:
                 key = self.path.split("/")[-1]
 
                 # Get the value from the datastore
@@ -123,7 +123,7 @@ class MyHandler(SimpleHTTPRequestHandler):
 
         self._send_headers(201)
 
-        if self.path == "/datastore":
+        if "datastore" in self.path:
             # Convert the JSON string to a dictionary
             data = json.loads(post_data.decode("utf-8"))
 
@@ -155,21 +155,33 @@ class MyHandler(SimpleHTTPRequestHandler):
         if "datastore" in self.path:
             # Get the key from the path
             key = self.path.split("/")[-1]
+            if "pop" in self.path:
+                key = key.replace("?pop=true", "")
+                # Delete the value from the datastore if exists
+                try:
+                    value = self._storage.pop(key)
+                    # Send the headers
+                    self._send_headers(200)
 
-            # Delete the value from the datastore if exists
-            try:
-                del self._storage[key]
-                # Send the headers
-                self._send_headers(204)
+                    # Convert the value to JSON
+                    json_data = json.dumps({"value": value})
+                    self.wfile.write(json_data.encode("utf-8"))
 
-            except KeyError:
-                self.send_response(404)
-                self.end_headers()
-                return
+                except KeyError:
+                    self.send_response(404)
+                    self.end_headers()
+                    return
+            else:
+                # Delete the value from the datastore if exists
+                try:
+                    del self._storage[key]
+                    # Send the headers
+                    self._send_headers(204)
 
-        else:
-            # Send the headers
-            self._send_headers(204)
+                except KeyError:
+                    self.send_response(404)
+                    self.end_headers()
+                    return
 
     def _send_headers(self, status=200, content_type="application/json"):
         """Send the headers for the response"""  # Return a 200 response

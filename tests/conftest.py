@@ -28,8 +28,16 @@ def document():
 
 
 @pytest.fixture()
-def fake_api(running_server):
+def fake_project_api(running_server):
     with mock.patch(
         "pyscript_dot_com.project.datastore.api_base", new=running_server["address"]
     ) as project_datastore:
         yield project_datastore
+
+
+@pytest.fixture()
+def fake_account_api(running_server):
+    with mock.patch(
+        "pyscript_dot_com.account.datastore.api_base", new=running_server["address"]
+    ) as account_datastore:
+        yield account_datastore
