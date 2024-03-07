@@ -1,0 +1,3 @@
+import requests
+
+pyfetch = requests
