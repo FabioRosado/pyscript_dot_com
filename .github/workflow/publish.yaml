@@ -1,0 +1,55 @@
+name: Publish
+
+on:
+    # Only on merges into main
+    push:
+        tags: v[0-9]+.[0-9]+.[0-9]+
+
+    workflow_dispatch:
+
+
+jobs:
+    build:
+        name: Build distribution
+        runs-on: ubuntu-latest
+
+        steps:
+        -   name: Checkout repository
+            uses: actions/checkout@v4
+        -   name: Setup Python
+            uses: actions/setup-python@v4
+            with:
+                python-version: '3.9'
+        -   name: Install pypa/build
+            run: python3 -m pip install build --user
+        -   name: Build a binary wheel and a source tarball
+            run: python3 -m build
+        -   name: Store the distribution packages
+            uses: actions/upload-artifact@v3
+            with:
+                name: python-package-distributions
+                path: dist/
+
+    # TODO: Add logic to do github release too here
+
+    publish:
+        name: Publish to TestPyPI
+        runs-on: ubuntu-latest
+        environment:
+            # name: pypi
+            name: testpypi
+            url: https://pypi.org/project/pyscript_dot_com
+        permissions:
+            id-token: ${{ secrets.PYPI_TOKEN }}
+
+        steps:
+        -   name: Download all the dists
+            uses: actions/download-artifacts@v3
+            with:
+                name: python-package-distributions
+                path: dist/
+        -   name: Publish release to PyPI
+            uses: pypa/gh-action-pypi-publish@release/v1
+            # This is for testing
+            with:
+                repository-url: https://test.pypi.org/legacy/
