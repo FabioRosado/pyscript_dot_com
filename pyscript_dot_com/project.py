@@ -3,7 +3,7 @@ import json
 from typing import Any
 
 from pyscript_dot_com.base import BaseDataStore
-from pyscript_dot_com.requests import async_request, request
+from pyscript_dot_com.requests import request
 from pyscript_dot_com.utils import get_base_url
 
 

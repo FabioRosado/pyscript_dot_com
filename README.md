@@ -65,7 +65,7 @@ assert project_name is None
 
 ```
 
-If you are curious to see how you can use both proxies and datastores, you can check this [pyscript module example]()
+If you are curious to see how you can use both proxies and datastores, you can check this [pyscript module example](https://pyscript.com/@fabiorosado/pyscript-module/latest).
 
 
 
