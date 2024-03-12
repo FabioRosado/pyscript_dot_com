@@ -40,7 +40,7 @@ jobs:
             name: testpypi
             url: https://pypi.org/project/pyscript_dot_com
         permissions:
-            id-token: ${{ secrets.PYPI_TOKEN }}
+            id-token: write
 
         steps:
         -   name: Download all the dists
