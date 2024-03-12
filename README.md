@@ -1,15 +1,15 @@
 # Pyscript Dot Com
 
-This is an utility package that allows you to interact with various PyScript.com features in an easy and simple way without the need to handle any low level API calls.
+This is a utility package that allows you to interact with various PyScript.com features easily and simply without the need to handle any low-level API calls.
 
-This module is currently in Alpha phase and there are some caveats:
+This module is currently in Alpha phase, and there are some caveats:
 - making a proxy request or using project/account datastores may block your application until the request is finished
 - micropython is currently not supported
 - Potential bugs from an Alpha release
 
 ## Proxies
 
-Pyscript proxies allow you to call an endpoint that you have created in your PyScript.com account. This is useful for calling endpoints that may require credentials or just API's that you don't want to expose to the public.
+Pyscript proxies allow you to call an endpoint created in your PyScript.com account. This is useful for calling endpoints that may require credentials or just APIs that you don't want to expose to the public.
 
 ### Setting proxies
 
@@ -32,13 +32,13 @@ If you print your response you will see something similar to:
 
 ## Datastores
 
-Pyscript datastores allow you to store and retrieve data from a key-value store. Datastore behaves like a dictionary and you can store and retrieve data from it. Currently you have three datastores that you can use:
+Pyscript datastores allow you to store and retrieve data from a key-value store. Datastore behaves like a dictionary and you can store and retrieve data from it. Currently, you have three datastores that you can use:
 
 - **local** - data will be stored in the user's browser
 - **project** - data will be stored in the project storage
 - **account** - data will be stored in your pyscript account storage
 
-This is useful for storing data that you want to persist across multiple runs of your pyscript app or shared data between multiple pyscript apps.
+This is useful for storing data that you want to persist across multiple runs of your pyscript app or shared data between numerous pyscript apps.
 
 ### Using datastores
 
@@ -66,7 +66,3 @@ assert project_name is None
 ```
 
 If you are curious to see how you can use both proxies and datastores, you can check this [pyscript module example](https://pyscript.com/@fabiorosado/pyscript-module/latest).
-
-
-
-

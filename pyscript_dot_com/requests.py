@@ -2,7 +2,8 @@ from typing import Optional
 
 import requests
 import urllib3
-from pyodide.http import pyfetch
+
+# from pyodide.http import pyfetch
 
 # TODO:
 # - Support Micropython
